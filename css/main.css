@@ -2522,6 +2522,10 @@ header {
     text-align: center;
 }
 
+    #stats h1 {
+        color : white;
+    }
+
     #stats .row {
         max-width: 1440px;
     }
