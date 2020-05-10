@@ -2,6 +2,14 @@
 
 // Replace this with your own email address
 $siteOwnersEmail = 'ali.sharafi@gmail.com';
+	set_include_path("IncludePath");
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\SMTP;
+	use PHPMailer\PHPMailer\Exception;
+
+	require 'IncludePath/Exception.php';
+require 'IncludePath/PHPMailer.php';
+require 'IncludePath/SMTP.php';
 
 
 if($_POST) {
@@ -28,6 +36,7 @@ if($_POST) {
 
 
    // Set Message
+   $message .= "Subject : " . $subject . "<br />";
    $message .= "Email from: " . $name . "<br />";
 	$message .= "Email address: " . $email . "<br />";
    $message .= "Message: <br />";
@@ -46,8 +55,40 @@ if($_POST) {
 
    if (!$error) {
 
-      ini_set("sendmail_from", $siteOwnersEmail); // for windows server
-      $mail = mail($siteOwnersEmail, $subject, $message, $headers);
+      //ini_set("sendmail_from", $siteOwnersEmail); // for windows server
+      //$mail = mail($siteOwnersEmail, $subject, $message, $headers);
+	  ////////////////////////////////////////////////
+	  try {
+
+
+		$mail = new PHPMailer(true);
+		//$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+		$mail->isSMTP();                                            // Send using SMTP
+		$mail->Host       = 'server290.hostnegar.com';                    // Set the SMTP server to send through
+		$mail->SMTPAuth   = true;                                   // Enable SMTP authentication
+		$mail->Username   = 'mail@alisharafi.name';                     // SMTP username
+		$mail->Password   = 'Mymailpass1';                               // SMTP password
+		$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+		$mail->Port       = 587;       
+		//Recipients
+		$mail->setFrom($email, 'From Your Site');
+		$mail->addAddress('ali.sharafi@gmail.com');     // Add a recipient
+
+		// Content
+		$mail->isHTML(true);                                  // Set email format to HTML
+		$mail->Subject = "From Your Site";
+		$mail->Body    = $message;
+
+		$mail->send();
+		echo 'Message has been sent';
+		} catch (Exception $e) 
+		{
+			echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+			echo error_get_last()['message'];
+		}
+	  ////////////////////////////////////////////////
+
+
 
 		if ($mail) { echo "OK"; }
       else { echo error_get_last()['message']; }
